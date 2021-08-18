@@ -1,0 +1,5 @@
+.tox
+.coverage
+poetry.lock
+*__pycache__*
+*.pyc

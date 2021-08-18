@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "chainofcalls"
+version = "0.1.0"
+description = ""
+authors = ["Massimiliano Culpo <massimiliano.culpo@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.5"
+
+[tool.poetry.dev-dependencies]
+pytest = ">=5.2"
+tox = "^3.24.1"
+pytest-cov = "^2.12.1"
+pylint = [
+  {version = "^2.4.4", python = "^3.5"}
+]
+black = [
+  {version = ">19.10b0", python = "^3.6"}
+]
+flake8 = [
+  {version = "^3.7.9", python = "^3.5"}
+]
+
+[tool.black]
+line-length = 99
+target-version = ['py27', 'py35', 'py36', 'py37', 'py38']
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
