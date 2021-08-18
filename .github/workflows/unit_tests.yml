@@ -2,9 +2,9 @@ name: Unit tests
 
 on:
   push:
-    branches: [ master, 'releases/**' ]
+    branches: [ main, 'releases/**' ]
   pull_request:
-    branches: [ master, 'releases/**' ]
+    branches: [ main, 'releases/**' ]
   schedule:
   - cron: "0 9 * * *"
     

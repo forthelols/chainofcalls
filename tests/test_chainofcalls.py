@@ -1,4 +1,3 @@
-from chainofcalls.chainofcalls import ChainOfCalls
 import chainofcalls
 
 
@@ -22,6 +21,7 @@ class TestChainOfCalls:
         chain.args["a"] = 1
         chain.execute()
 
+        assert chain.success_on_last_run
         assert chain.a == 1
         assert chain.b == 2
         assert chain.c == 4
@@ -79,3 +79,105 @@ class TestChainOfCalls:
 
         output = str(chain)
         assert output == "create_tarball -> sign_artifact -> compute_sha256"
+
+    def test_simple_cleanup(self):
+        """Test we can register and run cleanup functions"""
+        cleanup_called = False
+
+        @chainofcalls.output("a")
+        def foo():
+            return 1
+
+        @foo.cleanup()
+        def _cleanup():
+            nonlocal cleanup_called
+            cleanup_called = True
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        chain.execute()
+
+        assert cleanup_called
+
+    def test_simple_error(self):
+        """Test we can register and run error handlers"""
+        on_error_called = False
+
+        @chainofcalls.action
+        def foo():
+            raise RuntimeError("Oops!")
+
+        @foo.on_error()
+        def _on_error():
+            nonlocal on_error_called
+            on_error_called = True
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        chain.execute()
+
+        assert on_error_called
+
+    def test_error_and_cleanup_in_the_middle(self):
+        """Test that we call error handlers and cleanup functions for actions that started execution"""
+        foo_cleanup_called, foo_on_error_called = False, False
+        bar_cleanup_called, bar_on_error_called = False, False
+
+        @chainofcalls.action
+        def foo():
+            raise RuntimeError("Oops!")
+
+        @foo.on_error()
+        def _foo_on_error():
+            nonlocal foo_on_error_called
+            foo_on_error_called = True
+
+        @foo.cleanup()
+        def _foo_cleanup():
+            nonlocal foo_cleanup_called
+            foo_cleanup_called = True
+
+        @chainofcalls.action
+        def bar():
+            pass
+
+        @bar.on_error()
+        def _bar_on_error():
+            nonlocal bar_on_error_called
+            bar_on_error_called = True
+
+        @bar.cleanup()
+        def _bar_cleanup():
+            nonlocal bar_cleanup_called
+            bar_cleanup_called = True
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        chain.append(bar)
+        chain.execute()
+
+        assert foo_cleanup_called
+        assert foo_on_error_called
+        assert not bar_cleanup_called
+        assert not bar_on_error_called
+
+        assert not chain.success_on_last_run
+        assert str(chain.exception) == "Oops!"
+
+    def test_add_plain_functions(self):
+        number_of_calls = 0
+
+        def foo():
+            nonlocal number_of_calls
+            number_of_calls += 1
+
+        def bar():
+            nonlocal number_of_calls
+            number_of_calls += 1
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        chain.append(bar)
+        chain.execute()
+
+        assert number_of_calls == 2
