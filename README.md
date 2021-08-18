@@ -118,6 +118,7 @@ bar called
 bar error handler called
 foo error handler called
 bar cleanup called
+foo cleanup called
 ```
 All error handlers are called before cleanup functions, if an error occurs.
 In both cases the order of call is the opposite of the one used for the chain.
