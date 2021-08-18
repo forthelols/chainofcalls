@@ -24,6 +24,9 @@ class _ChainableAction:
 
     def output_dict(self):
         """Return a dictionary with the output that has been produced by the last call."""
+        if not self.output_names:
+            return {}
+
         if len(self.output_names) == 1:
             return {self.output_names[0]: self.output}
 

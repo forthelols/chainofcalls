@@ -163,3 +163,21 @@ class TestChainOfCalls:
 
         assert not chain.success_on_last_run
         assert str(chain.exception) == "Oops!"
+
+    def test_add_plain_functions(self):
+        number_of_calls = 0
+
+        def foo():
+            nonlocal number_of_calls
+            number_of_calls += 1
+
+        def bar():
+            nonlocal number_of_calls
+            number_of_calls += 1
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        chain.append(bar)
+        chain.execute()
+
+        assert number_of_calls == 2
