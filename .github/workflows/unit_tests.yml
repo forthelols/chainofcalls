@@ -9,7 +9,7 @@ on:
   - cron: "0 9 * * *"
     
 jobs:
-  build:
+  unit-tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

@@ -1,4 +1,6 @@
 [![Unit tests](https://github.com/forthelols/chainofcalls/actions/workflows/unit_tests.yml/badge.svg)](https://github.com/forthelols/chainofcalls/actions/workflows/unit_tests.yml)
+[![CodeQL](https://github.com/forthelols/chainofcalls/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/forthelols/chainofcalls/actions/workflows/codeql-analysis.yml)
+[![codecov](https://codecov.io/gh/forthelols/chainofcalls/branch/main/graph/badge.svg?token=Xq96LaBdak)](https://codecov.io/gh/forthelols/chainofcalls)
 
 # chainofcalls
 
