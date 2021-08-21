@@ -1,3 +1,5 @@
+import pytest
+
 import chainofcalls
 
 
@@ -181,3 +183,51 @@ class TestChainOfCalls:
         chain.execute()
 
         assert number_of_calls == 2
+
+    def test_extend_an_existing_chain(self):
+        @chainofcalls.output("b")
+        def foo(a):
+            return a + 1
+
+        @chainofcalls.output("c")
+        def bar(b):
+            return b + 1
+
+        initial_chain = chainofcalls.ChainOfCalls()
+        initial_chain.append(bar)
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        chain.args["a"] = 1
+        chain.extend(initial_chain)
+
+        chain.execute()
+        assert chain.c == 3
+
+    @pytest.mark.parametrize(
+        "func, exc_type", [(lambda: 1, TypeError), (lambda: (1, 2, 3), ValueError)]
+    )
+    def test_wrong_output_number(self, func, exc_type):
+        func = chainofcalls.output("a", "b")(func)
+        func()
+        with pytest.raises(exc_type):
+            func.output_dict()
+
+    def test_chain_get_set_and_del(self):
+        @chainofcalls.action
+        def foo():
+            return 1
+
+        @chainofcalls.action
+        def bar():
+            return 1
+
+        chain = chainofcalls.ChainOfCalls()
+        chain.append(foo)
+        assert chain[0] is foo
+
+        chain[0] = bar
+        assert chain[0] is bar
+
+        del chain[0]
+        assert len(chain) == 0
