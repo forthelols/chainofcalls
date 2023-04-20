@@ -28,7 +28,7 @@ jobs:
     - run: |
         tox
         coverage xml
-    - uses: codecov/codecov-action@v3.1.2
+    - uses: codecov/codecov-action@v3.1.3
       with:
         file: ./coverage.xml
         flags: unittests
